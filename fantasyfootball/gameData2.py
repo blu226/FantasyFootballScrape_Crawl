@@ -7,6 +7,7 @@ import urllib.error
 import socket
 import ssl
 import lxml
+import pickle
 
 
 # values so websites don't think I am a crawler and deny me access
@@ -25,8 +26,8 @@ class weeklyCrawler():
 
     def crawl(self):
 
-        for year in range(1970, 2019):
-            for week in range(1, 18):
+        for year in range(2018, 2019):
+            for week in range(1, 2):
                 for category in ["Passing", "Rushing", "Receiving"]:
 
                     url_to_crawl = self.url + "week=" + str(week) + "&season="  + str(year) + "&showCategory=" + category
@@ -38,11 +39,23 @@ class weeklyCrawler():
                     req = urllib.request.Request(url_to_crawl, data, headers)
 
                     try:
-                        response = urllib.request.urlopen(req, timeout=5, context=context)
+                        response = urllib.request.urlopen(req, context=context)
                         html = response.read()
 
                         data = pd.read_html(html)
-                        print(data)
+
+                        data = pd.DataFrame(data[0])
+                        cols = data.values[-1].tolist()
+
+                        data.columns = cols
+                        data["pos"] = "null"
+                        data["proj"] = "null"
+                        data["salary"] = "null"
+                        data.drop(data.tail(1).index, inplace=True)
+
+                        print(data.columns)
+
+                        pickle.dump(data, open("./weeklyData/season" + str(year) + "week" + str(week) + str(category) + ".pkl", "wb"))
 
                     except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                         print("ERROR:", e)
