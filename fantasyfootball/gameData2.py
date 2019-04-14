@@ -26,11 +26,11 @@ class weeklyCrawler():
 
     def crawl(self):
 
-        for year in range(2018, 2019):
-            for week in range(1, 2):
+        for year in range(1970, 2019):
+            for week in range(1, 18):
                 for category in ["Passing", "Rushing", "Receiving"]:
 
-                    url_to_crawl = self.url + "week=" + str(week) + "&season="  + str(year) + "&showCategory=" + category
+                    url_to_crawl = self.url + "week=" + str(week) + "&season=" + str(year) + "&showCategory=" + category
 
                     context = ssl.create_default_context()
                     context.check_hostname = False
@@ -53,7 +53,6 @@ class weeklyCrawler():
                         data["salary"] = "null"
                         data.drop(data.tail(1).index, inplace=True)
 
-                        print(data.columns)
 
                         pickle.dump(data, open("./weeklyData/season" + str(year) + "week" + str(week) + str(category) + ".pkl", "wb"))
 
