@@ -10,5 +10,5 @@ class Optimizer():
     def knapsack():
         #Return the optimal lineup when we consider player salaries
 
-    def max_lineup():
+    def maxLineup():
         #Return maximum possible lineup 
