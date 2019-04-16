@@ -61,40 +61,7 @@ class weeklyCrawler():
                                         dict["proj"] = proj
                                         rows_list.append(dict)
 
-
                             print(pd.DataFrame(rows_list))
-                            # data = pd.DataFrame(data)
-                            # print(data.columns)
-                            # for index, row in data.iterrows():
-                            #     print(row)
-                            # print(html)
-                            # soup = BeautifulSoup(html, 'lxml')
-                            # a = soup.find_all('td')
-                            # a = soup.find_all('a', class_="fav-player")
-
-                            # print(a)
-                            # response = urllib.request.urlopen(req, context=context)
-                            #
-                            # soup = BeautifulSoup(response, "html.parser")
-                            # table_div = soup.find_all("div", {"class": "k-grid-content k-auto-scrollable"})
-                            # print(table_div)
-
-                            # html = response.read()
-                            # print(html)
-                            # data = pd.read_html(html)   # error thrown No tables found
-
-                            #data = pd.DataFrame(data[0])
-                            #cols = data.values[-1].tolist()
-
-                            #data.columns = cols
-                            #data["pos"] = "null"
-                            #data["proj"] = "null"
-                            #data["salary"] = "null"
-                            #data.drop(data.tail(1).index, inplace=True)
-
-                            #print(data)
-
-                            # pickle.dump(data, open("./weeklyData/season" + str(year) + "week" + str(week) + str(category) + ".pkl", "wb"))
 
                         except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                             print("ERROR:", e)

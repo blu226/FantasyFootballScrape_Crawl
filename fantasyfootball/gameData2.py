@@ -53,7 +53,6 @@ class weeklyCrawler():
                         data["salary"] = "null"
                         data.drop(data.tail(1).index, inplace=True)
 
-
                         pickle.dump(data, open("./weeklyData/season" + str(year) + "week" + str(week) + str(category) + ".pkl", "wb"))
 
                     except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
