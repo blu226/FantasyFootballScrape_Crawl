@@ -6,8 +6,11 @@ import urllib.parse
 import urllib.error
 import socket
 import ssl
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 import lxml
 import pickle
+import html5lib
 
 
 # values so websites don't think I am a crawler and deny me access
@@ -26,41 +29,39 @@ class weeklyCrawler():
 
     def crawl(self):
 
-        for season in range(2002, 2018):
-            for team in range(0, 31):
-                for position in range(2, 7):
-                    for week in range(1, 16):
+        for season in range(2018, 2019):
+            for team in range(0, 1):
+                for position in range(2, 3):
+                    for week in range(1, 2):
+
 
                         url_to_crawl = self.url + "position=" + str(position) + "&team=" + str(team) + "&season=" + str(season)
                         url_to_crawl += "&seasontype=1&scope=2&startweek=" + str(week) + "&endweek=" + str(week)
 
-                        context = ssl.create_default_context()
-                        context.check_hostname = False
-                        context.verify_mode = ssl.CERT_NONE
-                        data = urllib.parse.urlencode(values).encode('utf-8')
-                        req = urllib.request.Request(url_to_crawl, data, headers)
+                        print(url_to_crawl)
 
                         try:
-                            response = urllib.request.urlopen(req, context=context)
 
-                            #soup = BeautifulSoup(response, "html.parser")
+                            options = Options()
+                            options.headless = True
+                            browser = webdriver.Firefox(options=options)
+                            browser.get(url_to_crawl)
+                            html = browser.page_source
+                            data = pd.read_html(html)
+                            rows_list = []
+                            for index, row in data[2].iterrows():
+                                for index2, row2 in data[3].iterrows():
+                                    if index == index2:
+                                        name = row[1]
+                                        salary = row2[6]
+                                        proj = row2[7]
+                                        dict = {}
+                                        dict["name"] = name
+                                        dict["salary"] = salary
+                                        dict["proj"] = proj
+                                        rows_list.append(dict)
 
-                            html = response.read()
-                            #print(html)
-                            data = pd.read_html(html)   # error thrown No tables found
-
-                            #data = pd.DataFrame(data[0])
-                            #cols = data.values[-1].tolist()
-
-                            #data.columns = cols
-                            #data["pos"] = "null"
-                            #data["proj"] = "null"
-                            #data["salary"] = "null"
-                            #data.drop(data.tail(1).index, inplace=True)
-
-                            #print(data)
-
-                            # pickle.dump(data, open("./weeklyData/season" + str(year) + "week" + str(week) + str(category) + ".pkl", "wb"))
+                            print(pd.DataFrame(rows_list))
 
                         except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                             print("ERROR:", e)
