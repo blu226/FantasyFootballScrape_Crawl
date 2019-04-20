@@ -1,106 +1,214 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QLabel, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QLabel, QFormLayout, QSpinBox, QVBoxLayout, QMainWindow
 from PyQt5.QtCore import *
 
-class Ui(QWidget):
+class UIWindow(object):
+    def setupUI(self, MainWindow):
+        MainWindow.setGeometry(50, 50, 400, 450)
+        MainWindow.setFixedSize(400, 450)
+        MainWindow.setWindowTitle("UIWindow")
+        self.centralwidget = QWidget(MainWindow)
+        # mainwindow.setWindowIcon(QtGui.QIcon('PhotoIcon.png'))
+        year_label = QLabel("Season: " + str(MainWindow.season), MainWindow)
+        start_label = QLabel("Start week: " + str(MainWindow.start), MainWindow)
+        end_label = QLabel("End week: " + str(MainWindow.end), MainWindow)
+        qb_label = QLabel("# QB: " + str(MainWindow.qb), MainWindow)
+        rb_label = QLabel("# RB: " + str(MainWindow.rb), MainWindow)
+        te_label = QLabel("# TE: " + str(MainWindow.te), MainWindow)
+        wr_label = QLabel("# WR: " + str(MainWindow.wr), MainWindow)
+        flex_label = QLabel("# Flex: " + str(MainWindow.flex), MainWindow)
+        def_label = QLabel("# Def: " + str(MainWindow.defense), MainWindow)
+        k_label = QLabel("# Kicker: " + str(MainWindow.k), MainWindow)
+        self.ToolsBTN = QPushButton('edit', self.centralwidget)
 
-    def __init__(self):
-        super().__init__()
+        labels = [year_label, start_label, end_label, qb_label, rb_label, wr_label, te_label,  flex_label, k_label, def_label, self.ToolsBTN]
 
-        self.initUI()
-
-    def initUI(self):
-
-        year_label = QLabel("Year:", self)
-        start_label = QLabel("Start week:", self)
-        end_label = QLabel("End week:", self)
-        qb_label = QLabel("# QB:", self)
-        rb_label = QLabel("# RB:", self)
-        te_label = QLabel("# TE:", self)
-        wr_label = QLabel("# WR:", self)
-        flex_label = QLabel("# Flex:", self)
-        
-
-        start_week = QComboBox(self)
-        end_week = QComboBox(self)
-        year = QComboBox(self)
-        num_QB = QComboBox(self)
-        num_RB = QComboBox(self)
-        num_WR = QComboBox(self)
-        num_TE = QComboBox(self)
-        num_flex = QComboBox(self)
-
-        labels = [year_label, start_label, end_label, qb_label, rb_label, te_label, wr_label, flex_label]
-        dropdowns = [year, start_week, end_week, num_QB, num_RB, num_TE, num_WR, num_flex]
-
-        for i in range(1, 18):
-            i = str(i)
-            start_week.addItem(i)
-            end_week.addItem(i)
-            if int(i) < 5:
-                num_QB.addItem(i)
-                num_RB.addItem(i)
-                num_WR.addItem(i)
-                num_TE.addItem(i)
-                num_flex.addItem(i)
-
-        for i in range(1970, 2019):
-            i = str(i)
-            year.addItem(i)
-
-        year.activated[str].connect(self.onActivated)
-        start_week.activated[str].connect(self.onActivated)
-        end_week.activated[str].connect(self.onActivated)
-        num_QB.activated[str].connect(self.onActivated)
-        num_RB.activated[str].connect(self.onActivated)
-        num_WR.activated[str].connect(self.onActivated)
-        num_TE.activated[str].connect(self.onActivated)
-        num_flex.activated[str].connect(self.onActivated)
-
-        hbox = QHBoxLayout()
         vbox = QVBoxLayout()
-        hbox.setAlignment(Qt.AlignTop)
-        # vbox.addStretch(0)
-        # hbox.addStretch(0)
+        vbox.setAlignment(Qt.AlignLeft)
+
         for label in labels:
-            hbox.addWidget(label)
+            vbox.addWidget(label)
 
-        # vbox.addLayout(hbox)
+        self.centralwidget.setLayout(vbox)
+        # self.ToolsBTN.move(50, 350)
+        MainWindow.setCentralWidget(self.centralwidget)
 
 
-        # year_label.move(10, 10)
-        # start_label.move(50, 10)
-        # end_label.move(90, 10)
-        # qb_label.move(130, 10)
-        # rb_label.move(170, 10)
-        # wr_label.move(210, 10)
-        # te_label.move(250, 10)
-        # flex_label.move(290, 10)
+class UIToolTab(object):
+    def __init__(self, MainWindow):
+        self.start = MainWindow.start
+        self.end = MainWindow.end
+        self.season = MainWindow.season
+        self.qb = MainWindow.qb
+        self.rb = MainWindow.rb
+        self.wr = MainWindow.wr
+        self.te = MainWindow.te
+        self.flex = MainWindow.flex
+        self.defense = MainWindow.defense
+        self.k = MainWindow.k
 
-        year.move(100, 50)
-        start_week.move(75, 75)
-        end_week.move(75, 100)
-        num_QB.move(75, 125)
-        num_RB.move(75, 150)
-        num_WR.move(75, 175)
-        num_TE.move(75, 200)
-        num_flex.move(75, 225)
+    def setupUI(self, MainWindow):
+        MainWindow.setGeometry(50, 50, 400, 450)
+        MainWindow.setFixedSize(400, 450)
+        MainWindow.setWindowTitle("UIToolTab")
+        self.centralwidget = QWidget(MainWindow)
 
-        self.setLayout(hbox)
-        self.setGeometry(500, 500, 500, 500)
-        self.setWindowTitle('Fantasy Football Lineup Generator')
+        self.year_spinbox = QSpinBox()
+        self.year_spinbox.setRange(1970, 2018)
+        self.year_spinbox.setValue(self.season)
+        self.year_spinbox.valueChanged.connect(self.year_valuechange)
+
+        self.start_spinbox = QSpinBox()
+        self.start_spinbox.setRange(1, 17)
+        self.start_spinbox.setValue(self.start)
+        self.start_spinbox.valueChanged.connect(self.start_valuechange)
+
+
+        self.end_spinbox = QSpinBox()
+        self.end_spinbox.setRange(self.start, 17)
+        self.end_spinbox.setValue(self.end)
+        self.end_spinbox.valueChanged.connect(self.end_valuechange)
+
+
+        self.qb_spinbox = QSpinBox()
+        self.qb_spinbox.setRange(0, 5)
+        self.qb_spinbox.setValue(self.qb)
+        self.qb_spinbox.valueChanged.connect(self.qb_valuechange)
+
+
+        self.rb_spinbox = QSpinBox()
+        self.rb_spinbox.setRange(0, 5)
+        self.rb_spinbox.setValue(self.rb)
+        self.rb_spinbox.valueChanged.connect(self.rb_valuechange)
+
+
+        self.wr_spinbox = QSpinBox()
+        self.wr_spinbox.setRange(0, 5)
+        self.wr_spinbox.setValue(self.wr)
+        self.wr_spinbox.valueChanged.connect(self.wr_valuechange)
+
+
+        self.te_spinbox = QSpinBox()
+        self.te_spinbox.setRange(0, 5)
+        self.te_spinbox.setValue(self.te)
+        self.te_spinbox.valueChanged.connect(self.te_valuechange)
+
+
+        self.f_spinbox = QSpinBox()
+        self.f_spinbox.setRange(0, 5)
+        self.f_spinbox.setValue(self.flex)
+        self.f_spinbox.valueChanged.connect(self.flex_valuechange)
+
+
+        self.d_spinbox = QSpinBox()
+        self.d_spinbox.setRange(0, 5)
+        self.d_spinbox.setValue(self.defense)
+        self.d_spinbox.valueChanged.connect(self.d_valuechange)
+
+
+        self.k_spinbox = QSpinBox()
+        self.k_spinbox.setRange(0, 5)
+        self.k_spinbox.setValue(self.k)
+        self.k_spinbox.valueChanged.connect(self.k_valuechange)
+
+
+
+        layout = QFormLayout()
+        layout.addRow(QLabel("Season:"), self.year_spinbox)
+        layout.addRow(QLabel("Start week:"), self.start_spinbox)
+        layout.addRow(QLabel("End week:"), self.end_spinbox)
+        layout.addRow(QLabel("# QB:"), self.qb_spinbox)
+        layout.addRow(QLabel("# RB:"), self.rb_spinbox)
+        layout.addRow(QLabel("# WR:"), self.wr_spinbox)
+        layout.addRow(QLabel("# TE:"), self.te_spinbox)
+        layout.addRow(QLabel("# Flex:"), self.f_spinbox)
+        layout.addRow(QLabel("# K:"), self.k_spinbox)
+        layout.addRow(QLabel("# Def:"), self.d_spinbox)
+
+
+        vbox = QVBoxLayout()
+        vbox.setAlignment(Qt.AlignLeft)
+        vbox.addLayout(layout)
+        self.CPSBTN = QPushButton("save", self.centralwidget)
+
+        vbox.addWidget(self.CPSBTN)
+
+        self.centralwidget.setLayout(vbox)
+
+        MainWindow.setCentralWidget(self.centralwidget)
+
+    def year_valuechange(self):
+        self.season = self.year_spinbox.value()
+
+    def start_valuechange(self):
+        self.start = self.start_spinbox.value()
+
+    def end_valuechange(self):
+        self.end = self.end_spinbox.value()
+
+    def qb_valuechange(self):
+        self.qb = self.qb_spinbox.value()
+
+    def rb_valuechange(self):
+        self.rb = self.rb_spinbox.value()
+
+    def wr_valuechange(self):
+        self.wr = self.wr_spinbox.value()
+
+    def te_valuechange(self):
+        self.te = self.te_spinbox.value()
+
+    def flex_valuechange(self):
+        self.flex = self.f_spinbox.value()
+
+    def k_valuechange(self):
+        self.k = self.k_spinbox.value()
+
+    def d_valuechange(self):
+        self.defense = self.d_spinbox.value()
+
+
+
+
+class MainWindow(QMainWindow):
+    def __init__(self,  parent=None):
+        super(MainWindow, self).__init__(parent)
+        self.start = 1
+        self.end = 1
+        self.season = 2018
+        self.qb = 1
+        self.rb = 2
+        self.wr = 2
+        self.te = 1
+        self.flex = 1
+        self.defense = 1
+        self.k = 1
+        self.uiWindow = UIWindow()
+        self.uiToolTab = UIToolTab(self)
+        self.startUIWindow()
+
+    def startUIToolTab(self):
+        self.uiToolTab.setupUI(self)
+        self.uiToolTab.CPSBTN.clicked.connect(self.startUIWindow)
         self.show()
 
-    def onActivated(self, text):
-
-        self.lbl.setText(text)
-        self.lbl.adjustSize()
+    def startUIWindow(self):
+        self.season = self.uiToolTab.season
+        self.start = self.uiToolTab.start
+        self.end = self.uiToolTab.end
+        self.qb = self.uiToolTab.qb
+        self.rb = self.uiToolTab.rb
+        self.wr = self.uiToolTab.wr
+        self.te = self.uiToolTab.te
+        self.flex = self.uiToolTab.flex
+        self.defense = self.uiToolTab.defense
+        self.k = self.uiToolTab.k
+        self.uiWindow.setupUI(self)
+        self.uiWindow.ToolsBTN.clicked.connect(self.startUIToolTab)
+        self.show()
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Ui()
+    w = MainWindow()
     sys.exit(app.exec_())
-
-
-
