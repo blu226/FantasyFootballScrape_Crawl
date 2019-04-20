@@ -8,6 +8,8 @@ import socket
 import ssl
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
+from selenium.common.exceptions import WebDriverException
+import os
 import lxml
 import pickle
 import html5lib
@@ -29,42 +31,65 @@ class weeklyCrawler():
 
     def crawl(self):
 
-        for season in range(2018, 2019):
-            for team in range(0, 1):
-                for position in range(2, 3):
-                    for week in range(1, 2):
+        options = Options()
+        options.headless = True
+        browser = webdriver.Firefox(options=options, )
+
+        for season in range(2015, 2019):
+            print("SEASON:", season)
+            path_to_folder = "./weeklyDataYears/" + str(season) + "/"
+            if not os.path.exists(path_to_folder):
+                os.makedirs(path_to_folder)
+            for team in range(0, 32):
+                print("TEAM:", team)
+                for position in range(2, 8):
+                    for week in range(1, 18):
 
 
                         url_to_crawl = self.url + "position=" + str(position) + "&team=" + str(team) + "&season=" + str(season)
                         url_to_crawl += "&seasontype=1&scope=2&startweek=" + str(week) + "&endweek=" + str(week)
 
-                        print(url_to_crawl)
+                        # print(url_to_crawl)
 
                         try:
 
-                            options = Options()
-                            options.headless = True
-                            browser = webdriver.Firefox(options=options)
+
                             browser.get(url_to_crawl)
                             html = browser.page_source
                             data = pd.read_html(html)
                             rows_list = []
-                            for index, row in data[2].iterrows():
-                                for index2, row2 in data[3].iterrows():
-                                    if index == index2:
-                                        name = row[1]
-                                        salary = row2[6]
-                                        proj = row2[7]
-                                        dict = {}
-                                        dict["name"] = name
-                                        dict["salary"] = salary
-                                        dict["proj"] = proj
-                                        rows_list.append(dict)
+                            if len(data) > 2:
+                                for index, row in data[2].iterrows():
+                                    for index2, row2 in data[3].iterrows():
+                                        if index == index2:
+                                            name = row[1]
+                                            salary = row2[6]
+                                            proj = row2[7]
+                                            dict = {}
+                                            dict["name"] = name
+                                            dict["salary"] = salary
+                                            dict["proj"] = proj
+                                            rows_list.append(dict)
 
-                            print(pd.DataFrame(rows_list))
+                                new_data = pd.DataFrame(rows_list)
 
-                        except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
+                                for category in ["Passing", "Rushing", "Receiving"]:
+                                    filename = str(season) + "week" + str(week) + category + ".pkl"
+                                    filepath = "./weeklyData/season" + filename
+                                    data = pickle.load(open(filepath, "rb"))
+
+                                    for index, row in data.iterrows():
+                                        for index2, row2 in new_data.iterrows():
+                                            if row["Name"] == row2["name"]:
+                                                row["proj"] = row2["proj"]
+                                                row["salary"] = row2["salary"]
+
+                                    pickle.dump(data, open(path_to_folder + filename, "wb"))
+
+                        except (urllib.error.URLError, ValueError, WebDriverException, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                             print("ERROR:", e)
+
+        browser.close()
 
 
 crawl = weeklyCrawler()

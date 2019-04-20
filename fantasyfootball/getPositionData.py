@@ -28,6 +28,7 @@ class weeklyCrawler():
 
         for year in range(1993, 2019):
             print("YEAR:", year)
+
             for category in ["passing", "rushing", "receiving"]:
 
                 url_to_crawl = self.url + str(year) + "/" + str(category) + ".htm"
@@ -75,4 +76,6 @@ class weeklyCrawler():
 
 crawl = weeklyCrawler()
 crawl.crawl()
+
+
 
