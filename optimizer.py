@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import sqlite3
 
 class Data():
     """
@@ -42,7 +43,7 @@ class Optimizer():
         self.budget = budget
 
         #"Pretty up" our data we read in. Getting it ready for use
-        raw_data = self._readData() #Read data in from database
+        raw_data = self._readData() #Read data into a dataframe from database.
         processed_data = self._preprocess(raw_data, weeks, years) #Get only the relevant data we want to work with
         self.data = Data(processed_data, self.positions) #Build data object for our data to separate data by position.
 
@@ -62,10 +63,12 @@ class Optimizer():
     def _readData(self):
         """
         Read in the data from our database.
-        Output: All of the raw data from the database.
+        Output: All of the raw data from the database, in a Pandas Dataframe.
         """
         print("Read from database")
-        data = pd.DataFrame()
+        con = sqlite3.connect("data/portal_mammals.sqlite")
+        data = pd.read_sql_table("Table name", con)
+        con.close()
 
         return data
 
