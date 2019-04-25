@@ -38,7 +38,7 @@ class Optimizer():
     ):
         self.positions = ["QB", "RB", "WR", "TE", "FLEX", "K", "D"]
 
-        self.lineup_counts = self.buildLineupCounts(position_counts)
+        self.lineup_counts = self._buildLineupCounts(position_counts)
         self.budget = budget
 
         #"Pretty up" our data we read in. Getting it ready for use
@@ -46,7 +46,7 @@ class Optimizer():
         processed_data = self._preprocess(raw_data, weeks, years) #Get only the relevant data we want to work with
         self.data = Data(processed_data, self.positions) #Build data object for our data to separate data by position.
 
-    def buildLineupCounts(self, position_counts):
+    def _buildLineupCounts(self, position_counts):
         """
         Input: position_counts - List of counts for each position. This is in the order as shown below. 
         Format: [QB, RB, WR, TE, FLEX, K, D]
