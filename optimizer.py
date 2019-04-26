@@ -46,6 +46,7 @@ class Optimizer():
         raw_data = self._readData() #Read data into a dataframe from database.
         processed_data = self._preprocess(raw_data, weeks, years) #Get only the relevant data we want to work with
         self.data = Data(processed_data, self.positions) #Build data object for our data to separate data by position.
+        print("Finished setup!")
 
     def _buildLineupCounts(self, position_counts):
         """
@@ -66,9 +67,10 @@ class Optimizer():
         Output: All of the raw data from the database, in a Pandas Dataframe.
         """
         print("Read from database")
-        con = sqlite3.connect("data/portal_mammals.sqlite")
-        data = pd.read_sql_table("Table name", con)
+        con = sqlite3.connect("fantasyfootball/players.db")
+        data = pd.read_sql_query("select * from players", con)
         con.close()
+        print(data.head())
 
         return data
 
@@ -81,14 +83,22 @@ class Optimizer():
         #Have dictionary mapping from position to the sorted data for that position?
         year_filter = raw_data['year'].isin(years)
         data_yearfiltered = raw_data[year_filter]
+        print("Data year filtered")
+        print(data_yearfiltered.head())
 
-        week_filter = raw_data['week'].isin(weeks)
-        data = data_yearfiltered[week_filter]
+        week_filter = raw_data['week']
+        week_filter2 = week_filter.isin(weeks) #Split into two lines because was getting "Boolean Series Key will be reindexed to match DataFrame index"
+        data = data_yearfiltered[week_filter2]
+        print("Data week filtered")
+        print(data.head())
 
         return data
 
     def knapsack(self):
         #Return the optimal lineup when we consider player salaries
+        """
+        Need to use: self.budget
+        """
         max_lineup = []
 
         return max_lineup
@@ -117,7 +127,5 @@ class Optimizer():
         return max_lineup
 
             
-            
-
         
 
