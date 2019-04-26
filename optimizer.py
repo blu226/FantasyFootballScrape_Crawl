@@ -70,7 +70,6 @@ class Optimizer():
         con = sqlite3.connect("fantasyfootball/players.db")
         data = pd.read_sql_query("select * from players", con)
         con.close()
-        print(data.head())
 
         return data
 
@@ -81,16 +80,17 @@ class Optimizer():
         #TODO:sort the data then return it. How? need data sorted by position AND by points. Separate by 
         #position? Have a class for data, have one dataframe/2Darray for each position and sort those?
         #Have dictionary mapping from position to the sorted data for that position?
-        year_filter = raw_data['year'].isin(years)
+        '''Previous approach. Got Boolean Series Key error
+        year_filter = raw_data["year"].isin(years)
         data_yearfiltered = raw_data[year_filter]
-        print("Data year filtered")
-        print(data_yearfiltered.head())
-
-        week_filter = raw_data['week']
+       
+        week_filter = raw_data["week"]
         week_filter2 = week_filter.isin(weeks) #Split into two lines because was getting "Boolean Series Key will be reindexed to match DataFrame index"
         data = data_yearfiltered[week_filter2]
-        print("Data week filtered")
-        print(data.head())
+        '''
+
+        mask = raw_data[['year', 'week']].isin({'year': years, 'week': weeks}).all(axis=1)
+        data = raw_data[mask]
 
         return data
 
