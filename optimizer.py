@@ -24,8 +24,13 @@ class Data():
         self.data_all["D"] = self.positionSelector("D")
 
     def positionSelector(self, position):
-        position_filter = self.data["pos"] == position
-        position_data = self.data[position_filter]
+        if position == "FLEX":
+            position_filter = self.data["pos"].isin(["RB", "WR", "TE"])
+
+        else:
+            position_filter = self.data["pos"] == position
+
+        position_data = self.data[position_filter].reset_index(drop=True)
 
         return position_data
 
@@ -118,10 +123,13 @@ class Optimizer():
             for i in range(position_number):
                 #Get a player for each number of times the user requested for this position.
                 #TODO: ACCESS THE DATA AT THIS ROW. DATA IS SORTED SO CAN JUST QUERY THE TOP OF DATA
-                name = self.data.data_all[position][i]
-                points = self.data.data_all[position][i]
+                print("position:", position)
+                print(self.data.data_all[position])
+                name = self.data.data_all[position].iloc[i]["name"]
+                points = self.data.data_all[position].iloc[i]["proj"]
+                salary = self.data.data_all[position].iloc[i]["salary"]
 
-                max_lineup.append( (position, name, points) ) #Append a tuple of information
+                max_lineup.append( (position, name, points, salary) ) #Append a tuple of information
 
 
         return max_lineup
