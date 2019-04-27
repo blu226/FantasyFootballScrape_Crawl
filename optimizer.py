@@ -97,6 +97,10 @@ class Optimizer():
         mask = raw_data[['year', 'week']].isin({'year': years, 'week': weeks}).all(axis=1)
         data = raw_data[mask]
 
+        #Put the data in some sort of order
+        #TODO: CHANGE TO SORT BY 'PROJ' WHEN WE HAVE THE DATA
+        data.sort_values(by=['name'], inplace=True, ascending=False)
+
         return data
 
     def knapsack(self):
