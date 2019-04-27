@@ -21,6 +21,7 @@ def checkRow(name, year, week):
 
 def insert(dfRow, year, week, cur, role):
     global recordID
+    global playerGames
     if year < 2001:
         fg = "FGM"
         xp = "XPM"
@@ -70,6 +71,7 @@ def insert(dfRow, year, week, cur, role):
 
         cur.execute(sql_insert_kickRow, (dfRow['Name'], 'K'))
 
+    playerGames.append(dfRow['Name']+str(year)+str(week))
     recordID += 1
     print(recordID)
 
@@ -80,15 +82,16 @@ def update(dfRow, year, week, cur, role):
     if role is 'rec':
         sql_update_recRow = ('UPDATE players '
                              'SET receptions = '+str(dfRow['Rec'])+', recYards = '+str(dfRow['Yds'])+', recTD = '+str(dfRow['TD'])+' '
-                             'WHERE name = ? AND year = '+str(year)+' AND week = '+str(week)+')')
-        cur.execute(sql_update_recRow, (dfRow['Name']))
+                             'WHERE name = ? AND year = '+str(year)+' AND week = '+str(week)+'')
+
+        cur.execute(sql_update_recRow, (dfRow['Name'],))
 
     # Rush: add rushYards, rushTD
     elif role is 'rush':
         sql_update_rushRow = ('UPDATE players '
                               'SET rushYards = '+str(dfRow['Yds'])+', rushTD = '+str(dfRow['TD'])+' '
-                              'WHERE name = ? AND year = '+str(year)+' AND week = '+str(week)+')')
-        cur.execute(sql_update_rushRow, (dfRow['Name']))
+                              'WHERE name = ? AND year = '+str(year)+' AND week = '+str(week)+'')
+        cur.execute(sql_update_rushRow, (dfRow['Name'],))
     else:
         print("uh oh")
 
