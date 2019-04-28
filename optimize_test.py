@@ -10,7 +10,7 @@ def main():
     budget = 60000
 
     obj = Optimizer(position_counts, weeks, years, budget)
-    lineup = obj.maxLineup()
+    lineup = obj.knapsack()
     print(lineup)
 
 

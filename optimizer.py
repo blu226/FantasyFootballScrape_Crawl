@@ -44,7 +44,7 @@ class Optimizer():
     ):
         self.positions = ["QB", "RB", "WR", "TE", "FLEX", "K", "D"]
 
-        self.lineup_counts, lineup_dict = self._buildLineupCounts(position_counts)
+        self.lineup_counts, self.lineup_dict = self._buildLineupCounts(position_counts)
         self.budget = budget
 
         #"Pretty up" our data we read in. Getting it ready for use
@@ -101,6 +101,7 @@ class Optimizer():
 
         #Put the data in some sort of order
         #TODO: CHANGE TO SORT BY 'PROJ' WHEN WE HAVE THE DATA
+        pd.options.mode.chained_assignment = None  # default='warn', we are just adding a column.
         data['value'] = data['proj'] / data['salary']
         data.sort_values(by=['name'], inplace=True, ascending=False)
         
@@ -112,20 +113,35 @@ class Optimizer():
         """
         Need to use: self.budget
         """
+        print("Running Knapsack problem...")
+        
+        #Setup
+        self.data.data.sort_values(by=['value'], inplace=True, ascending=False)
+        print(self.data.data)
+
         max_lineup = []
         roster_counts = dict()
         for pos in self.positions:
             roster_counts[pos] = 0
+        roster_cost = 0
 
+        #Algorithm iterations
+        for index, player in self.data.data.iterrows():
 
-        for player in self.data.data:
+            print("Player:", player)
             position = player["pos"]
-            max_lineup.append()
-            roster_count = roster_counts[position]
-            roster_count += 1
-            roster_counts[position] = roster_count
+            print("Position", position)
+            if(position is not None and player["salary"] is not None):
 
+                if((roster_counts[position] < self.lineup_dict[position]) and (roster_cost <= self.budget)):
 
+                    max_lineup.append( (position, player["name"], player["proj"], player["salary"]) )
+                    roster_count = roster_counts[position]
+                    roster_count += 1
+                    roster_counts[position] = roster_count
+                    roster_cost += player["salary"]
+
+        print(max_lineup)
         return max_lineup
 
 
