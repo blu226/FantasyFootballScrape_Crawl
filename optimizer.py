@@ -44,7 +44,7 @@ class Optimizer():
     ):
         self.positions = ["QB", "RB", "WR", "TE", "FLEX", "K", "D"]
 
-        self.lineup_counts = self._buildLineupCounts(position_counts)
+        self.lineup_counts, lineup_dict = self._buildLineupCounts(position_counts)
         self.budget = budget
 
         #"Pretty up" our data we read in. Getting it ready for use
@@ -55,16 +55,18 @@ class Optimizer():
 
     def _buildLineupCounts(self, position_counts):
         """
-        Input: position_counts - List of counts for each position. This is in the order as shown below. 
-        Format: [QB, RB, WR, TE, FLEX, K, D]
+        Input: position_counts - List of counts for each position. This is in the order as shown below. \n
+        Format: [QB, RB, WR, TE, FLEX, K, D] \n
         Output: Returns a list like [('QB',num), ('RB',num), WR, TE, FLEX, K, D]
         The list contains a tuple for each position with the number of players for that position requested.
         """
         
         lineup = list()
+        lineup_dict = dict()
         for index, num in enumerate(position_counts):
             lineup.append( (self.positions[index], num) )
-        return lineup
+            lineup_dict[self.positions[index]] = num
+        return lineup, lineup_dict
 
     def _readData(self):
         """
@@ -99,7 +101,9 @@ class Optimizer():
 
         #Put the data in some sort of order
         #TODO: CHANGE TO SORT BY 'PROJ' WHEN WE HAVE THE DATA
+        data['value'] = data['proj'] / data['salary']
         data.sort_values(by=['name'], inplace=True, ascending=False)
+        
 
         return data
 
@@ -109,6 +113,18 @@ class Optimizer():
         Need to use: self.budget
         """
         max_lineup = []
+        roster_counts = dict()
+        for pos in self.positions:
+            roster_counts[pos] = 0
+
+
+        for player in self.data.data:
+            position = player["pos"]
+            max_lineup.append()
+            roster_count = roster_counts[position]
+            roster_count += 1
+            roster_counts[position] = roster_count
+
 
         return max_lineup
 
@@ -116,7 +132,7 @@ class Optimizer():
     def maxLineup(self):
         """
         Return maximum possible lineup
-        Returns: Python list of tuples. Each tuple contains (position, player name, points scored)
+        Returns: Python list of tuples. Each tuple contains (position, player name, points scored, salary)
         """
         max_lineup = []
 
