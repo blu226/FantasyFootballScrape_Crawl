@@ -14,7 +14,6 @@ import lxml
 import pickle
 import html5lib
 
-
 # values so websites don't think I am a crawler and deny me access
 user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
 values = {'name' : 'CS485_crawl',
@@ -37,22 +36,16 @@ class weeklyCrawler():
 
         for season in range(2015, 2019):
             print("SEASON:", season)
-            path_to_folder = "./weeklyDataYears/" + str(season) + "/"
-            if not os.path.exists(path_to_folder):
-                os.makedirs(path_to_folder)
             for team in range(0, 32):
                 print("TEAM:", team)
                 for position in range(2, 8):
                     for week in range(1, 18):
-
+                        path_to_folder = "./Data/" + str(season) + "/week_" + str(week) + "/"
 
                         url_to_crawl = self.url + "position=" + str(position) + "&team=" + str(team) + "&season=" + str(season)
                         url_to_crawl += "&seasontype=1&scope=2&startweek=" + str(week) + "&endweek=" + str(week)
 
-                        # print(url_to_crawl)
-
                         try:
-
 
                             browser.get(url_to_crawl)
                             html = browser.page_source
@@ -73,18 +66,27 @@ class weeklyCrawler():
 
                                 new_data = pd.DataFrame(rows_list)
 
-                                for category in ["Passing", "Rushing", "Receiving"]:
-                                    filename = str(season) + "week" + str(week) + category + ".pkl"
-                                    filepath = "./weeklyData/season" + filename
-                                    data = pickle.load(open(filepath, "rb"))
+                                if position < 6:
+                                    categories = ["Passing", "Rushing", "Receiving"]
+                                elif position == 6:
+                                    categories = ["Placekick"]
+                                else:
+                                    categories = ["Defense"]
 
-                                    for index, row in data.iterrows():
-                                        for index2, row2 in new_data.iterrows():
-                                            if row["Name"] == row2["name"]:
-                                                row["proj"] = row2["proj"]
-                                                row["salary"] = row2["salary"]
+                                for category in categories:
+                                    filename = category + ".pkl"
 
-                                    pickle.dump(data, open(path_to_folder + filename, "wb"))
+                                    data = pickle.load(open(path_to_folder + filename, "rb"))
+                                    print(data)
+
+                                    # for index, row in data.iterrows():
+                                    #     for index2, row2 in new_data.iterrows():
+                                    #         if type(row["Name"]) == str and type(row2["name"]) == str:
+                                    #             if row["Name"].lower() == row2["name"].lower() and row["proj"] == "null":
+                                    #                 row["proj"] = row2["proj"]
+                                    #                 row["salary"] = row2["salary"]
+                                    #
+                                    # pickle.dump(data, open(path_to_folder + filename, "wb"))
 
                         except (urllib.error.URLError, ValueError, WebDriverException, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                             print("ERROR:", e)

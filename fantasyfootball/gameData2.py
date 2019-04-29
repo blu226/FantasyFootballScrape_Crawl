@@ -6,6 +6,7 @@ import urllib.parse
 import urllib.error
 import socket
 import ssl
+import os
 import lxml
 import pickle
 
@@ -28,7 +29,10 @@ class weeklyCrawler():
 
         for year in range(1970, 2019):
             for week in range(1, 18):
-                for category in ["Passing", "Rushing", "Receiving"]:
+                path_to_folder = "./Data/" + str(year) + "/week_" + str(week) + "/"
+                if not os.path.exists(path_to_folder):
+                    os.makedirs(path_to_folder)
+                for category in ["Passing", "Rushing", "Receiving", "Placekick"]:
 
                     url_to_crawl = self.url + "week=" + str(week) + "&season=" + str(year) + "&showCategory=" + category
 
@@ -48,12 +52,16 @@ class weeklyCrawler():
                         cols = data.values[-1].tolist()
 
                         data.columns = cols
-                        data["pos"] = "null"
+                        # print(data)
+                        if category == "Placekick":
+                            data["pos"] = "k"
+                        else:
+                            data["pos"] = "null"
                         data["proj"] = "null"
                         data["salary"] = "null"
                         data.drop(data.tail(1).index, inplace=True)
 
-                        pickle.dump(data, open("./weeklyData/season" + str(year) + "week" + str(week) + str(category) + ".pkl", "wb"))
+                        pickle.dump(data, open(path_to_folder + str(category) + ".pkl", "wb"))
 
                     except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                         print("ERROR:", e)

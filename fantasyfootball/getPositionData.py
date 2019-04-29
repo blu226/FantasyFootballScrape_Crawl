@@ -26,7 +26,7 @@ class weeklyCrawler():
 
     def crawl(self):
 
-        for year in range(1993, 2019):
+        for year in range(1970, 2019):
             print("YEAR:", year)
 
             for category in ["passing", "rushing", "receiving"]:
@@ -57,18 +57,25 @@ class weeklyCrawler():
                         name = str(row["Player"]).replace("*", "")
                         name = name.replace("+", "")
                         for week in range(1, 18):
-                            for pkl_category in ["Passing", "Rushing", "Receiving"]:
+                            for pkl_category in ["/Passing.pkl", "/Rushing.pkl", "/Receiving.pkl"]:
 
-                                loaded_data = pickle.load(open("./weeklyData/season" + str(year) + "week" + str(week) + pkl_category + ".pkl", "rb"))
+                                loaded_data = pickle.load(open("./Data/" + str(year) + "/week_" + str(week) + pkl_category, "rb"))
                                 for pkl_index, pkl_row in loaded_data.iterrows():
                                     if pkl_row["Name"] == name:
                                         pos = row["Pos"]
                                         if isinstance(pos, str):
                                             pos_arr = pos.split("/")
-                                            pkl_row["pos"] = pos_arr[0].upper()
+                                            if len(pos_arr) > 1:
+                                                if "rb" in pos_arr or "RB" in pos_arr or "FB" in pos_arr or "fb" in pos_arr and pkl_row["pos"] == "null":
+                                                    pkl_row["pos"] = "RB"
+                                                elif "WR" in pos_arr or "wr" in pos_arr and pkl_row["pos"] == "null":
+                                                    pkl_row["pos"] = "WR"
+                                            else:
+                                                pkl_row["pos"] = pos_arr[0].upper()
                                             break
+                                        # else:
 
-                                pickle.dump(loaded_data, open("./weeklyData/season" + str(year) + "week" + str(week) + pkl_category + ".pkl", "wb"))
+                                pickle.dump(loaded_data, open("./Data/" + str(year) + "/week_" + str(week) + pkl_category, "wb"))
 
                 except (urllib.error.URLError, ValueError, ConnectionResetError, ConnectionError, TimeoutError, ConnectionRefusedError, socket.timeout) as e:
                     print("ERROR:", e)
