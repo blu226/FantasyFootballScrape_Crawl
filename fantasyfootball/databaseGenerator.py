@@ -31,8 +31,8 @@ def insert(dfRow, year, week, cur, role):
         xp = "XP Made"
 
     sal = 'null1'
-    #print (dfRow['salary'])
-    #if role is not 'def':
+    # print (dfRow['salary'])
+    # if role is not 'def':
      #   if not dfRow['salary'] == 'null':
       #      print(dfRow['salary'])
       #      if math.isnan(float(dfRow['salary'])):
@@ -57,8 +57,6 @@ def insert(dfRow, year, week, cur, role):
         proj = None
 
     print(sal)
-
-
 
     if role is 'pass':
 
@@ -128,6 +126,18 @@ def update(dfRow, year, week, cur, role):
                               'SET rushYards = '+str(dfRow['Yds'])+', rushTD = '+str(dfRow['TD'])+' '
                               'WHERE name = ? AND year = '+str(year)+' AND week = '+str(week)+'')
         cur.execute(sql_update_rushRow, (dfRow['Name'],))
+    elif role is 'kick':
+        if year < 2001:
+            fg = "FGM"
+            xp = "XPM"
+        else:
+            fg = "FG Made"
+            xp = "XP Made"
+        sql_update_kickRow = ('UPDATE players '
+                              'SET fgm = '+str(dfRow[fg])+', fga = '+str(dfRow['FG Att'])+', '
+                              'xpm = '+str(dfRow[xp])+', xpa = '+str(dfRow['XP Att'])+' '
+                              'WHERE name = ? AND year = '+str(year)+' AND week = '+str(week)+'')
+        cur.execute(sql_update_kickRow, (dfRow['Name'],))
     else:
         print("uh oh")
 
@@ -156,9 +166,9 @@ def main():
     conn = sqlite3.connect("players.db")  # connect to database
     cur = conn.cursor()  # cursor allows sql command execution
     df = pd.read_pickle("./Data/2017/week_15/Receiving.pkl")
-    pd.options.display.max_columns = 4000
-    print(df)  # iloc() is used to select rows
-    print(df.iloc[70])
+    #pd.options.display.max_columns = 4000
+    #print(df)  # iloc() is used to select rows
+    #print(df.iloc[70])
 
     # schema(PRIMARY_KEY:recordID(int), playerID(int), name(string), year(int), week(int), pos(int), comp(int),
     # passYards(int), passTD(int), int(int), fum(int), receptions(int), recYards(int), recTD(int), rushYards(int),
