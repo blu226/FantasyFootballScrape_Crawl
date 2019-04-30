@@ -102,8 +102,21 @@ class Optimizer():
         #Put the data in some sort of order
         #TODO: CHANGE TO SORT BY 'PROJ' WHEN WE HAVE THE DATA
         pd.options.mode.chained_assignment = None  # default='warn', we are just adding a column.
+        data.fillna(value=pd.np.nan, inplace=True)
+        data['proj'] = pd.to_numeric(data['proj'], errors='coerce') #Fix TypeError when sorting
+        data['salary'] = pd.to_numeric(data['salary'], errors='coerce')
+        '''
+        if(type(data['proj']) is float and type(data['salary']) is float):
+            data['value'] = data['proj'] / data['salary']
+        else:
+            #If one of these values is None or Null
+            data['value'] = np.NaN
+        '''
         data['value'] = data['proj'] / data['salary']
-        data.sort_values(by=['name'], inplace=True, ascending=False)
+
+        #data[data['proj'].isnull()]
+        #data[data['salary'].isnull()]
+        data.sort_values(by=['proj'], inplace=True, ascending=False)
         
 
         return data
@@ -128,11 +141,11 @@ class Optimizer():
         #Algorithm iterations
         for index, player in self.data.data.iterrows():
 
-            print("Player:", player)
+            #print("Player:", player)
             position = player["pos"]
             print("Position", position)
-            if(position is not None and player["salary"] is not None):
-
+            if(position in self.positions): #and player["salary"] is float):
+                print("Position was a string", position)
                 if((roster_counts[position] < self.lineup_dict[position]) and (roster_cost <= self.budget)):
 
                     max_lineup.append( (position, player["name"], player["proj"], player["salary"]) )
@@ -141,7 +154,7 @@ class Optimizer():
                     roster_counts[position] = roster_count
                     roster_cost += player["salary"]
 
-        print(max_lineup)
+        #print(max_lineup)
         return max_lineup
 
 
@@ -159,8 +172,9 @@ class Optimizer():
             for i in range(position_number):
                 #Get a player for each number of times the user requested for this position.
                 #TODO: ACCESS THE DATA AT THIS ROW. DATA IS SORTED SO CAN JUST QUERY THE TOP OF DATA
-                print("position:", position)
-                print(self.data.data_all[position])
+                
+                #print("position:", position)
+                #print(self.data.data_all[position])
                 name = self.data.data_all[position].iloc[i]["name"]
                 points = self.data.data_all[position].iloc[i]["proj"]
                 salary = self.data.data_all[position].iloc[i]["salary"]
