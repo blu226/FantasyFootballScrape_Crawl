@@ -3,6 +3,12 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QComboBox, QLabe
 from PyQt5.QtCore import *
 import time
 
+from optimizer import Optimizer
+from optimizer import Data
+
+
+
+
 class UIWindow(object):
     def setupUI(self, MainWindow):
         MainWindow.setGeometry(50, 50, 400, 450)
@@ -44,6 +50,25 @@ class resultsUI(object):
         MainWindow.setWindowTitle("ResultsUIToolTab")
         self.centralwidget = QWidget(MainWindow)
 
+        # loop through list you pass in and create labels and add each label to the labels array
+
+        obj = Optimizer(MainWindow.positions, MainWindow.weeks, MainWindow.season, MainWindow.sal)
+        lineup = obj.maxLineup()
+        print(lineup)
+        title_label = QLabel("Maximum Lineup", MainWindow)
+        testlabels = [title_label]
+        for slot in lineup:
+            pos = slot[0]
+            name = slot[1]
+            points = slot[2]
+            salary = slot[3]
+            slotstring = str(pos) + " " + str(name) + " " + str(points) + " " + str(salary)
+            testlabels.append(QLabel(str(slotstring), MainWindow))
+
+        self.back = QPushButton("back", self.centralwidget)
+        testlabels.append(self.back)
+
+        title_label = QLabel("Knapsack Lineup", MainWindow)
         qb_label = QLabel(" QB: " + str(1), MainWindow)
         rb_label = QLabel(" RB: " + str(1), MainWindow)
         te_label = QLabel(" TE: " + str(1), MainWindow)
@@ -53,13 +78,15 @@ class resultsUI(object):
         k_label = QLabel(" Kicker: " + str(1), MainWindow)
         self.back = QPushButton("back", self.centralwidget)
 
+        # then this label array will have everything we need to display just make sure you add the back button!
+        labels = [title_label, qb_label, rb_label, wr_label, te_label, flex_label, k_label, def_label, self.back]
 
-        labels = [qb_label, rb_label, wr_label, te_label, flex_label, k_label, def_label, self.back]
 
+        # keep all this the same
         vbox = QVBoxLayout()
         vbox.setAlignment(Qt.AlignLeft)
 
-        for label in labels:
+        for label in testlabels:
             vbox.addWidget(label)
 
         self.centralwidget.setLayout(vbox)
@@ -220,7 +247,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.start = 1
         self.end = 1
-        self.season = 2018
+        self.weeks = range(self.start, self.end+1)
+        self.season = [2018]
         self.qb = 1
         self.rb = 2
         self.wr = 2
@@ -228,6 +256,7 @@ class MainWindow(QMainWindow):
         self.flex = 1
         self.defense = 1
         self.k = 1
+        self.positions = [self.qb, self.rb, self.wr, self.te, self.flex, self.defense, self.k]
         self.sal = 100000
         self.uiWindow = UIWindow()
         self.uiToolTab = UIToolTab(self)
@@ -240,6 +269,9 @@ class MainWindow(QMainWindow):
         self.show()
 
     def genTeamTab(self):
+        # call optimization code here using self variables above
+
+        # pass a list into setup results of what to display. something like [[name, pos, stats, score], [name, pos, stats, score], [name, pos, stats, score]]
         self.resultsUI.setupResults(self)
         self.resultsUI.back.clicked.connect(self.startUIWindow)
         self.show()

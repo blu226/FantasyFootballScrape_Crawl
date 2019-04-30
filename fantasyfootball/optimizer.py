@@ -49,7 +49,9 @@ class Optimizer():
 
         #"Pretty up" our data we read in. Getting it ready for use
         raw_data = self._readData() #Read data into a dataframe from database.
+        print("Processesing data")
         processed_data = self._preprocess(raw_data, weeks, years) #Get only the relevant data we want to work with
+        print("Putting in our data structure")
         self.data = Data(processed_data, self.positions) #Build data object for our data to separate data by position.
         print("Finished setup!")
 
@@ -95,9 +97,10 @@ class Optimizer():
         week_filter2 = week_filter.isin(weeks) #Split into two lines because was getting "Boolean Series Key will be reindexed to match DataFrame index"
         data = data_yearfiltered[week_filter2]
         '''
-
+        print("Hello1")
         mask = raw_data[['year', 'week']].isin({'year': years, 'week': weeks}).all(axis=1)
         data = raw_data[mask]
+        print("Hello")
 
         #Put the data in some sort of order
         #TODO: CHANGE TO SORT BY 'PROJ' WHEN WE HAVE THE DATA
