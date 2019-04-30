@@ -65,6 +65,9 @@ class resultsUI(object):
             slotstring = str(pos) + " " + str(name) + " " + str(points) + " " + str(salary)
             testlabels.append(QLabel(str(slotstring), MainWindow))
 
+        self.back = QPushButton("back", self.centralwidget)
+        testlabels.append(self.back)
+
         title_label = QLabel("Knapsack Lineup", MainWindow)
         qb_label = QLabel(" QB: " + str(1), MainWindow)
         rb_label = QLabel(" RB: " + str(1), MainWindow)
