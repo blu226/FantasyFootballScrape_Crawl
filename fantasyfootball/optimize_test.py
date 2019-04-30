@@ -9,7 +9,7 @@ def main():
     weeks = [3]
     years = [2015]
     budget = 60000
-    print(np.arange(1, 2))
+
     print()
     obj = Optimizer(position_counts, weeks, years, budget)
     lineup = obj.knapsack()
