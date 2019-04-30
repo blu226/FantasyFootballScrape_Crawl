@@ -53,9 +53,9 @@ class resultsUI(object):
         # loop through list you pass in and create labels and add each label to the labels array
 
         obj = Optimizer(MainWindow.positions, MainWindow.weeks, MainWindow.season, MainWindow.sal)
-        lineup = obj.knapsack()
+        lineup = obj.maxLineup()
         print(lineup)
-        title_label = QLabel("Knapsack Lineup", MainWindow)
+        title_label = QLabel("Maximum Lineup", MainWindow)
         testlabels = [title_label]
         for slot in lineup:
             pos = slot[0]
