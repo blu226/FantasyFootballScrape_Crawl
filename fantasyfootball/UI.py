@@ -21,9 +21,9 @@ class UIWindow(object):
         def_label = QLabel("# Def: " + str(MainWindow.defense), MainWindow)
         k_label = QLabel("# Kicker: " + str(MainWindow.k), MainWindow)
         self.ToolsBTN = QPushButton('edit', self.centralwidget)
-        self.SubmitBTN = QPushButton('generate', self.centralwidget)
+        self.SubmitBTN = QPushButton('generate', self.centralwidget) #Brad
 
-        labels = [year_label, start_label, end_label, qb_label, rb_label, wr_label, te_label,  flex_label, k_label, def_label, self.ToolsBTN, self.SubmitBTN]
+        labels = [year_label, start_label, end_label, qb_label, rb_label, wr_label, te_label,  flex_label, k_label, def_label, self.ToolsBTN, self.SubmitBTN] #~Brad
 
         vbox = QVBoxLayout()
         vbox.setAlignment(Qt.AlignLeft)
@@ -139,38 +139,30 @@ class UIToolTab(object):
 
         MainWindow.setCentralWidget(self.centralwidget)
 
-    def setupResultsUI(self, MainWindow):
+    def setupResultsUI(self, MainWindow): #Brad
         MainWindow.setGeometry(50, 50, 400, 450)
         MainWindow.setFixedSize(400, 450)
         MainWindow.setWindowTitle("ResultsUIToolTab")
         self.centralwidget = QWidget(MainWindow)
 
-        layout = QFormLayout()
-        for x in range(self.qb_spinbox):
-            layout.addRow(QLabel(" QB: "))
-        for x in range(self.rb_spinbox):
-            layout.addRow(QLabel(" RB: "))
-        for x in range(self.wr_spinbox):
-            layout.addRow(QLabel(" WR: "))
-        for x in range(self.te_spinbox):
-            layout.addRow(QLabel(" TE: "))
-        for x in range(self.f_spinbox):
-            layout.addRow(QLabel(" Flex: "))
-        for x in range(self.k_spinbox):
-            layout.addRow(QLabel(" K: "))
-        for x in range(self.d_spinbox):
-            layout.addRow(QLabel(" Def: "))
+        qb_label = QLabel(" QB: " + str(1), MainWindow)
+        rb_label = QLabel(" RB: " + str(1), MainWindow)
+        te_label = QLabel(" TE: " + str(1), MainWindow)
+        wr_label = QLabel(" WR: " + str(1), MainWindow)
+        flex_label = QLabel(" Flex: " + str(1), MainWindow)
+        def_label = QLabel(" Def: " + str(1), MainWindow)
+        k_label = QLabel(" Kicker: " + str(1), MainWindow)
+
+        labels = [qb_label, rb_label, wr_label, te_label, flex_label, k_label, def_label]
 
         vbox = QVBoxLayout()
         vbox.setAlignment(Qt.AlignLeft)
-        vbox.addLayout(layout)
 
-        self.DBTN = QPushButton("done", self)
-
-        vbox.addWidget(self.DBTN)
+        for label in labels:
+            vbox.addWidget(label)
 
         self.centralwidget.setLayout(vbox)
-
+        # self.ToolsBTN.move(50, 350)
         MainWindow.setCentralWidget(self.centralwidget)
 
     def year_valuechange(self):
@@ -230,7 +222,7 @@ class MainWindow(QMainWindow):
 
     def genTeamTab(self):
         self.uiToolTab.setupResultsUI(self)
-        self.uiToolTab.CPSBTN.clicked.connect(self.startUIWindow)
+        self.uiToolTab.DBTN.clicked.connect(self.startUIWindow)
         self.show()
 
 
