@@ -44,6 +44,8 @@ class resultsUI(object):
         MainWindow.setWindowTitle("ResultsUIToolTab")
         self.centralwidget = QWidget(MainWindow)
 
+        # loop through list you pass in and create labels and add each label to the labels array
+
         qb_label = QLabel(" QB: " + str(1), MainWindow)
         rb_label = QLabel(" RB: " + str(1), MainWindow)
         te_label = QLabel(" TE: " + str(1), MainWindow)
@@ -53,9 +55,11 @@ class resultsUI(object):
         k_label = QLabel(" Kicker: " + str(1), MainWindow)
         self.back = QPushButton("back", self.centralwidget)
 
-
+        # then this label array will have everything we need to display just make sure you add the back button!
         labels = [qb_label, rb_label, wr_label, te_label, flex_label, k_label, def_label, self.back]
 
+
+        # keep all this the same
         vbox = QVBoxLayout()
         vbox.setAlignment(Qt.AlignLeft)
 
@@ -240,6 +244,9 @@ class MainWindow(QMainWindow):
         self.show()
 
     def genTeamTab(self):
+        # call optimization code here using self variables above
+
+        # pass a list into setup results of what to display. something like [[name, pos, stats, score], [name, pos, stats, score], [name, pos, stats, score]]
         self.resultsUI.setupResults(self)
         self.resultsUI.back.clicked.connect(self.startUIWindow)
         self.show()
