@@ -116,7 +116,7 @@ class UIToolTab(object):
 
         self.year_spinbox = QSpinBox()
         self.year_spinbox.setRange(1970, 2018)
-        self.year_spinbox.setValue(self.season)
+        self.year_spinbox.setValue(self.season[0])
         self.year_spinbox.valueChanged.connect(self.year_valuechange)
 
         self.start_spinbox = QSpinBox()
@@ -207,7 +207,7 @@ class UIToolTab(object):
 
 
     def year_valuechange(self):
-        self.season = self.year_spinbox.value()
+        self.season = [self.year_spinbox.value()]
 
     def start_valuechange(self):
         self.start = self.start_spinbox.value()
